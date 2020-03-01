@@ -41,6 +41,9 @@ accounts:
       - aws-account-destroyer
       - aws-account-destroyer-build-trigger
       - aws-account-destroyer-event-trigger
+      IAMUserPolicyAttachment:
+      - type: glob
+        value: '*'
       IAMRolePolicyAttachment:
       - type: glob
         value: OrganizationAccountAccessRole -> *
