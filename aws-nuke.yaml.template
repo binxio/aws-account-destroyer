@@ -38,6 +38,7 @@ accounts:
       - value: aws-account-destroyer-event-trigger 
       IAMRole:
       - OrganizationAccountAccessRole
+      - CloudFormationAdministrator
       - aws-account-destroyer
       - aws-account-destroyer-build-trigger
       - aws-account-destroyer-event-trigger
@@ -46,13 +47,7 @@ accounts:
         value: '*'
       IAMRolePolicyAttachment:
       - type: glob
-        value: OrganizationAccountAccessRole -> *
-      - type: glob
-        value: aws-account-destroyer -> *
-      - type: glob
-        value: aws-account-destroyer-build-trigger -> *
-      - type: glob
-        value: aws-account-destroyer-event-trigger -> *
+        value: '*'
       CodeBuildProject:
       - aws-account-destroyer
       CodeCommitRepository:
