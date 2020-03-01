@@ -67,3 +67,6 @@ accounts:
         value: 'Rule: aws-account-destroyer*'
       CloudFormationStack:
       - aws-account-destroyer
+      CloudWatchLogsLogGroup:
+      - /aws/codebuild/aws-account-destroyer
+      - /aws/lambda/aws-account-destroyer
