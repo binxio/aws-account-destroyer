@@ -1,0 +1,66 @@
+regions:
+-  eu-west-1
+-  eu-central-1
+#-  eu-north-1
+#-  ap-south-1
+#-  eu-west-3
+#-  eu-west-2
+#-  ap-northeast-2
+#-  ap-northeast-1
+#-  sa-east-1
+#-  ca-central-1
+#-  ap-southeast-1
+#-  ap-southeast-2
+#-  eu-central-1
+#-  us-east-1
+#-  us-east-2
+#-  us-west-1
+#-  us-west-2
+-  global
+
+account-blacklist:
+- "245111612214"
+
+accounts:
+  "{{ACCOUNT_ID}}":
+    filters:
+      IAMUser:
+      - type: blog
+        value: *
+      IAMUserAccessKey:
+      - type: blog
+        value: *
+      IAMVirtualMFADevice:
+      - type: blog
+        value: *
+      IAMRolePolicy:
+      - property: role:RoleName
+      - value: aws-account-destroyer-event-trigger 
+      IAMRole:
+      - OrganizationAccountAccessRole
+      - aws-account-destroyer
+      - aws-account-destroyer-build-trigger
+      - aws-account-destroyer-event-trigger
+      IAMRolePolicyAttachment:
+      - type: glob
+        value: OrganizationAccountAccessRole -> *
+      - type: glob
+        value: aws-account-destroyer -> *
+      - type: glob
+        value: aws-account-destroyer-build-trigger -> *
+      - type: glob
+        value: aws-account-destroyer-event-trigger -> *
+      CodeBuildProject:
+      - aws-account-destroyer
+      CodeCommitRepository:
+      - aws-account-destroyer
+      LambdaFunction:
+      - aws-account-destroyer
+      CloudWatchEventsRule:
+      - type: glob
+        value: 'Rule: aws-account-destroyer*'
+      CloudWatchEventsTarget:
+      - type: glob
+        value: 'Rule: aws-account-destroyer*'
+      CloudFormationStack:
+      - aws-account-destroyer

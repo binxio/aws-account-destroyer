@@ -1,0 +1,21 @@
+#!/bin/bash
+ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+echo "INFO: about to nuke $ACCOUNT_ID"
+aws sts get-session-token \
+  --output text \
+  --query 'join(` `, [
+    `aws configure --profile aws-account-destroyer set aws_access_key_id `,
+    Credentials.AccessKeyId,
+    `\naws configure --profile aws-account-destroyer set aws_secret_access_key `,
+    Credentials.SecretAccessKey,
+    `\naws configure --profile aws-account-destroyer set aws_session_token `,
+    Credentials.SessionToken, `\n`])' | bash
+echo "INFO: profile set"
+if ! which aws-nuke; then
+	echo "INFO: downloading aws-nuke"
+	curl -sS -L -o /usr/local/bin/aws-nuke https://github.com/rebuy-de/aws-nuke/releases/download/v2.14.0/aws-nuke-v2.14.0-linux-amd64
+	chmod +x /usr/local/bin/aws-nuke
+	export PATH=$PATH:/usr/local/bin
+fi
+sed -e "s/{{ACCOUNT_ID}}/$ACCOUNT_ID/g" aws-nuke.yaml.template > aws-nuke.yaml
+aws-nuke --profile default --config aws-nuke.yaml --force --profile aws-account-destroyer $@

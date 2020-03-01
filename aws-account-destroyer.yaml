@@ -1,0 +1,124 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  GitRepository:
+    Type: AWS::CodeCommit::Repository
+    Properties:
+      RepositoryName: aws-account-destroyer
+      Triggers:
+        - Name: BuildTrigger
+          DestinationArn: !GetAtt 'BuildTrigger.Arn'
+          Branches:
+            - master
+          Events:
+            - updateReference
+          CustomData: aws-account-destroyer
+
+  Project:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: aws-account-destroyer
+      Description: 'Destroy everything in your AWS Account'
+      ServiceRole: !Ref 'ProjectRole'
+      Artifacts:
+        Type: no_artifacts
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:2.0
+        PrivilegedMode: true
+
+      Source:
+        Type: CODECOMMIT
+        Location: !GetAtt 'GitRepository.CloneUrlHttp'
+        BuildSpec: deploy.yaml
+        GitCloneDepth: 0
+
+  BuildTrigger:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: trigger codebuild on commit
+      Handler: index.handler
+      Runtime: python3.7
+      Role: !GetAtt 'BuildTriggerRole.Arn'
+      FunctionName: aws-account-destroyer
+      Code:
+        ZipFile: |
+          import boto3
+
+          def handler(event, context):
+            print('Starting a new build ...')
+            cb = boto3.client('codebuild')
+            build = {
+              'projectName': event['Records'][0]['customData'],
+              'sourceVersion': event['Records'][0]['codecommit']['references'][0]['commit']
+            }
+            print('Starting build for project {0} from commit ID {1}'.format(build['projectName'], build['sourceVersion']))
+            cb.start_build(**build)
+
+  BuildTriggerPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref 'BuildTrigger'
+      Principal: codecommit.amazonaws.com
+      SourceArn: !GetAtt 'GitRepository.Arn'
+
+  AWSAccountDestroyRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Destroy AWS Account resources daily
+      Name: aws-account-destroyer
+      ScheduleExpression: cron(0 23 * * ? *)
+      State: ENABLED
+      Targets:
+        - Id: aws-account-destroyer
+          RoleArn: !GetAtt 'EventTriggerRole.Arn'
+          Input: |
+            {"buildspecOverride": "destroy.yaml"}
+          Arn: !GetAtt Project.Arn
+
+  EventTriggerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: aws-account-destroyer-event-trigger
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: sts:AssumeRole
+            Condition: {}
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSCodeBuildDeveloperAccess
+
+  BuildTriggerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: aws-account-destroyer-build-trigger
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+            Condition: {}
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AWSCodeBuildDeveloperAccess
+
+  ProjectRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: aws-account-destroyer
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service: codebuild.amazonaws.com
+            Condition: {}
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
