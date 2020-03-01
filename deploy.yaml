@@ -7,8 +7,8 @@ phases:
       pip install awscli
   build:
     commands:
-      ->  
-        aws cloudformation deploy 
+      - >
+        aws cloudformation deploy
         --stack-name aws-account-destroyer 
         --template-file ./aws-account-destroyer.yaml  
         --capabilities CAPABILITY_NAMED_IAM
