@@ -1,67 +1,53 @@
 regions:
--  eu-west-1
--  eu-central-1
-#-  eu-north-1
-#-  ap-south-1
-#-  eu-west-3
-#-  eu-west-2
-#-  ap-northeast-2
-#-  ap-northeast-1
-#-  sa-east-1
-#-  ca-central-1
-#-  ap-southeast-1
-#-  ap-southeast-2
-#-  eu-central-1
-#-  us-east-1
-#-  us-east-2
-#-  us-west-1
-#-  us-west-2
--  global
-
+  - eu-west-1
+  - eu-central-1
+  - global
 account-blacklist:
-- "245111612214"
-
+  - '245111612214'
 accounts:
-  "{{ACCOUNT_ID}}":
+  '{{ACCOUNT_ID}}':
     filters:
       IAMUser:
-      - type: glob
-        value: '*'
+        - type: glob
+          value: '*'
       IAMUserAccessKey:
-      - type: glob
-        value: '*'
+        - type: glob
+          value: '*'
       IAMVirtualMFADevice:
-      - type: glob
-        value: '*'
+        - type: glob
+          value: '*'
       IAMRolePolicy:
-      - property: role:RoleName
-      - value: aws-account-destroyer-event-trigger 
+        - property: role:RoleName
+        - value: aws-account-destroyer-event-trigger
       IAMRole:
-      - OrganizationAccountAccessRole
-      - CloudFormationAdministrator
-      - aws-account-destroyer
-      - aws-account-destroyer-build-trigger
-      - aws-account-destroyer-event-trigger
+        - OrganizationAccountAccessRole
+        - CloudFormationAdministrator
+        - aws-account-destroyer
+        - aws-account-destroyer-build-trigger
+        - aws-account-destroyer-event-trigger
       IAMUserPolicyAttachment:
-      - type: glob
-        value: '*'
+        - type: glob
+          value: '*'
       IAMRolePolicyAttachment:
-      - type: glob
-        value: '*'
+        - type: glob
+          value: '*'
       CodeBuildProject:
-      - aws-account-destroyer
+        - aws-account-destroyer
       CodeCommitRepository:
-      - aws-account-destroyer
+        - aws-account-destroyer
       LambdaFunction:
-      - aws-account-destroyer
+        - aws-account-destroyer
       CloudWatchEventsRule:
-      - type: glob
-        value: 'Rule: aws-account-destroyer*'
+        - type: glob
+          value: 'Rule: aws-account-destroyer*'
       CloudWatchEventsTarget:
-      - type: glob
-        value: 'Rule: aws-account-destroyer*'
+        - type: glob
+          value: 'Rule: aws-account-destroyer*'
       CloudFormationStack:
-      - aws-account-destroyer
+        - aws-account-destroyer
       CloudWatchLogsLogGroup:
-      - /aws/codebuild/aws-account-destroyer
-      - /aws/lambda/aws-account-destroyer
+        - /aws/codebuild/aws-account-destroyer
+        - /aws/lambda/aws-account-destroyer
+      OpsWorksUserProfile:
+        - type: glob
+        - value: arn:aws:iam::{{ACCOUNT_ID}}:assumed-role/aws-account-destroyer/*
