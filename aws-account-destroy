@@ -18,4 +18,4 @@ if ! which aws-nuke; then
 	export PATH=$PATH:/usr/local/bin
 fi
 sed -e "s/{{ACCOUNT_ID}}/$ACCOUNT_ID/g" aws-nuke.yaml.template > aws-nuke.yaml
-aws-nuke --profile default --config aws-nuke.yaml --force --profile aws-account-destroyer $@
+aws-nuke -v --config aws-nuke.yaml --force --force-sleep 2 --profile aws-account-destroyer $@
