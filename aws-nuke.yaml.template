@@ -26,13 +26,13 @@ accounts:
     filters:
       IAMUser:
       - type: blog
-        value: *
+        value: '*'
       IAMUserAccessKey:
       - type: blog
-        value: *
+        value: '*'
       IAMVirtualMFADevice:
       - type: blog
-        value: *
+        value: '*'
       IAMRolePolicy:
       - property: role:RoleName
       - value: aws-account-destroyer-event-trigger 
