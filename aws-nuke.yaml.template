@@ -25,13 +25,13 @@ accounts:
   "{{ACCOUNT_ID}}":
     filters:
       IAMUser:
-      - type: blog
+      - type: glob
         value: '*'
       IAMUserAccessKey:
-      - type: blog
+      - type: glob
         value: '*'
       IAMVirtualMFADevice:
-      - type: blog
+      - type: glob
         value: '*'
       IAMRolePolicy:
       - property: role:RoleName
