@@ -2,12 +2,13 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      docker: 18
       python: 3.7
+    commands:
+      pip install awscli
   build:
     commands:
       ->  
-        aws --profile mark-xebia cloudformation deploy 
+        aws cloudformation deploy 
         --stack-name aws-account-destroyer 
         --template-file ./aws-account-destroyer.yaml  
         --capabilities CAPABILITY_NAMED_IAM
