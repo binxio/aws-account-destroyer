@@ -2,5 +2,5 @@ version: 0.2
 phases:
   build:
     commands:
-      - ./aws-account-destroy --no-dry-run
+      - bin/destroy --no-dry-run
 

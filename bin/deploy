@@ -1,0 +1,2 @@
+aws cloudformation deploy --no-fail-on-empty-changeset --stack-name aws-account-destroyer  --template-file ./aws-account-destroyer.yaml   --capabilities CAPABILITY_NAMED_IAM
+
