@@ -17,5 +17,5 @@ version: 0.2
 phases:
   build:
     commands:
-      - bin/destroy --no-dry-run
+      - bin/destroy --no-dry-run --force
 
