@@ -18,7 +18,7 @@ regions:
   - eu-central-1
   - global
 account-blacklist:
-  - '245111612214'
+  - '123456789010'
 accounts:
   '{{ACCOUNT_ID}}':
     filters:
