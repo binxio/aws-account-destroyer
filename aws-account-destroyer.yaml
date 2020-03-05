@@ -84,7 +84,7 @@ Resources:
       Description: Destroy AWS Account resources daily
       Name: aws-account-destroyer
       ScheduleExpression: cron(0 23 * * ? *)
-      State: ENABLED
+      State: DISABLED
       Targets:
         - Id: aws-account-destroyer
           RoleArn: !GetAtt 'EventTriggerRole.Arn'
