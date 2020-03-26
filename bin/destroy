@@ -39,6 +39,7 @@ aws sts assume-role \
 	    Credentials.SessionToken])' |sh
 
 
+cat ~/.aws/credentials
 sed -e "s/{{ACCOUNT_ID}}/$ACCOUNT_ID/g" aws-nuke.yaml.template > aws-nuke.yaml
 
 docker run \
