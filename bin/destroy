@@ -26,24 +26,20 @@ if [[ -z $ALIAS ]]; then
 	echo "ERROR: account $ACCOUNT does not have an account alias.">&2
 	exit 1
 fi
-aws sts assume-role \
+eval$(aws sts assume-role \
 	--role-arn arn:aws:iam::$ACCOUNT_ID:role/aws-account-destroyer \
 	--role-session-name aws-account-destroyer \
 	--output text \
 	--query 'join(``, [
-	    `aws configure --profile aws-account-destroyer set aws_access_key_id `,
+	    `export AWS_ACCESS_KEY_ID=`,
 	    Credentials.AccessKeyId,
-	    `\naws configure --profile aws-account-destroyer set aws_secret_access_key `,
+	    `\nexport AWS_SECRET_ACCESS_KEY=`,
 	    Credentials.SecretAccessKey,
-	    `\naws configure --profile aws-account-destroyer set aws_session_token `,
-	    Credentials.SessionToken, `\n`])' |sh
+	    `\nexport AWS_SESSION_TOKEN`,
+	    Credentials.SessionToken, `\n`])')
 
 
-docker run \
-    --rm \
-    -v $PWD:/wrk -w /wrk \
-    -v $HOME/.aws:/home/aws-nuke/.aws:ro \
-    --entrypoint /bin/sh  quay.io/rebuy/aws-nuke:latest  -c '/bin/cat $HOME/.aws/credentials'
+env | grep AWS
 
 sed -e "s/{{ACCOUNT_ID}}/$ACCOUNT_ID/g" aws-nuke.yaml.template > aws-nuke.yaml
 
@@ -54,5 +50,7 @@ docker run \
     quay.io/rebuy/aws-nuke:latest \
     	--config aws-nuke.yaml \
 	--force-sleep 60 \
-        --profile aws-account-destroyer \
+	--access-key-id $AWS_ACCESS_KEY_ID \
+	--secret-access-secret $AWS_SECRET_ACCESS_KEY \
+	--session-token $AWS_SESSION_TOKEN \
 	$@
