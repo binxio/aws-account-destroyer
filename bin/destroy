@@ -14,30 +14,33 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
+set -e -o pipefail
+if [[ -z $AWS_PROFILE ]] ;then
+	echo "ERROR: AWS_PROFILE is not set" >&2
+	exit 1
+fi
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-eval $(aws sts get-session-token \
-  --output text \
-  --query 'join(` `, [
-    `AWS_ACCESS_KEY_ID=`,
-    Credentials.AccessKeyId,
-    `\nAWS_SECRET_ACCESS_KEY=`,
-    Credentials.SecretAccessKey,
-    `\nAWS_SESSION_TOKEN=`,
-    Credentials.SessionToken, `\n`])')
+if [[ -z $ACCOUNT_ID ]]; then
+	echo "ERROR: failed to determine AWS account number">&2
+	exit 1
+fi
 
-echo "INFO: profile aws-account-destroyer set to destroy account $ACCOUNT_ID"
+ALIAS=$(aws iam  list-account-aliases  --query AccountAliases  --output text || exit 0)
+if [[ -z $ALIAS ]]; then
+	echo "ERROR: account $ACCOUNT does not have an account alias.">&2
+	exit 1
+fi
 aws sts get-caller-identity 
 
 sed -e "s/{{ACCOUNT_ID}}/$ACCOUNT_ID/g" aws-nuke.yaml.template > aws-nuke.yaml
 
 docker run \
+    --network host \
     --rm -it \
+    -e AWS_PROFILE=$AWS_PROFILE \
     -v $PWD:/wrk -w /wrk \
     -v $HOME/.aws:/home/aws-nuke/.aws:ro \
     quay.io/rebuy/aws-nuke:latest \
     	--config aws-nuke.yaml \
 	--force-sleep 60 \
-        --access-key-id $AWS_ACCESS_KEY_ID \
-        --secret-access-key $AWS_SECRET_ACCESS_KEY \
-        --session-token $AWS_SESSION_TOKEN \
 	$@

@@ -14,6 +14,33 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
+set -e -o pipefail
+
+if [[ $1 != ENABLED ]]  && [[ $1 != DISABLED ]] ; then
+	echo "Usage: $(basename $0) [ENABLED|DISABLED]" >&2
+	exit 1
+fi
+
+ACCOUNT=$(aws sts get-caller-identity --query Account --output text || exit 0)
+if [[ -z $ACCOUNT ]]; then
+	echo "ERROR: failed to determine AWS account number">&2
+	exit 1
+fi
+
+ALIAS=$(aws iam  list-account-aliases  --query AccountAliases  --output text || exit 0)
+if [[ -z $ALIAS ]]; then
+	echo "ERROR: account $ACCOUNT does not have an account alias.">&2
+	exit 1
+fi
+
+echo "WARNING: you are about to install the AWS nuke in account $ACCOUNT/$ALIAS" >&2
+echo >&2
+read -p "it will destroy the content of entire $ACCOUNT/$ALIAS every day at 23:00, continue yes/no? " CONTINUE
+if [[ $CONTINUE != yes ]]; then
+	echo "aborted!"
+	exit 1
+fi
+
 aws cloudformation deploy \
         --no-fail-on-empty-changeset \
         --stack-name aws-account-destroyer \
