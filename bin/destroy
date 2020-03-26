@@ -35,7 +35,7 @@ eval $(aws sts assume-role \
 	    Credentials.AccessKeyId,
 	    `\nexport AWS_SECRET_ACCESS_KEY=`,
 	    Credentials.SecretAccessKey,
-	    `\nexport AWS_SESSION_TOKEN`,
+	    `\nexport AWS_SESSION_TOKEN=`,
 	    Credentials.SessionToken, `\n`])')
 
 
