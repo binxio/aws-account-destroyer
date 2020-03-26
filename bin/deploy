@@ -14,9 +14,10 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
-yaws cloudformation deploy \
+aws cloudformation deploy \
         --no-fail-on-empty-changeset \
         --stack-name aws-account-destroyer \
         --template-file ./aws-account-destroyer.yaml \
-        --capabilities CAPABILITY_NAMED_IAM
+        --capabilities CAPABILITY_NAMED_IAM \
+        --parameter-overrides ScheduledEvent=${1:-DISABLED}
 

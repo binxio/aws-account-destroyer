@@ -15,22 +15,29 @@
 #   limitations under the License.
 #
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-echo "INFO: about to nuke $ACCOUNT_ID"
-aws sts get-session-token \
+eval $(aws sts get-session-token \
   --output text \
   --query 'join(` `, [
-    `aws configure --profile aws-account-destroyer set aws_access_key_id `,
+    `AWS_ACCESS_KEY_ID=`,
     Credentials.AccessKeyId,
-    `\naws configure --profile aws-account-destroyer set aws_secret_access_key `,
+    `\nAWS_SECRET_ACCESS_KEY=`,
     Credentials.SecretAccessKey,
-    `\naws configure --profile aws-account-destroyer set aws_session_token `,
-    Credentials.SessionToken, `\n`])' | bash
-echo "INFO: profile set"
-if ! which aws-nuke; then
-	echo "INFO: downloading aws-nuke"
-	curl -sS -L -o /usr/local/bin/aws-nuke https://github.com/rebuy-de/aws-nuke/releases/download/v2.14.0/aws-nuke-v2.14.0-linux-amd64
-	chmod +x /usr/local/bin/aws-nuke
-	export PATH=$PATH:/usr/local/bin
-fi
+    `\nAWS_SESSION_TOKEN=`,
+    Credentials.SessionToken, `\n`])')
+
+echo "INFO: profile aws-account-destroyer set to destroy account $ACCOUNT_ID"
+aws sts get-caller-identity 
+
 sed -e "s/{{ACCOUNT_ID}}/$ACCOUNT_ID/g" aws-nuke.yaml.template > aws-nuke.yaml
-aws-nuke --config aws-nuke.yaml --force-sleep 60 --profile aws-account-destroyer $@
+
+docker run \
+    --rm -it \
+    -v $PWD:/wrk -w /wrk \
+    -v $HOME/.aws:/home/aws-nuke/.aws:ro \
+    quay.io/rebuy/aws-nuke:latest \
+    	--config aws-nuke.yaml \
+	--force-sleep 60 \
+        --access-key-id $AWS_ACCESS_KEY_ID \
+        --secret-access-key $AWS_SECRET_ACCESS_KEY \
+        --session-token $AWS_SESSION_TOKEN \
+	$@

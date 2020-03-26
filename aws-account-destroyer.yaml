@@ -14,6 +14,13 @@
 #   limitations under the License.
 #
 AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  ScheduledEvent:
+    Type: String
+    AllowedValues:
+      - ENABLED
+      - DISABLED
+    Default: DISABLED
 Resources:
   GitRepository:
     Type: AWS::CodeCommit::Repository
@@ -84,7 +91,7 @@ Resources:
       Description: Destroy AWS Account resources daily
       Name: aws-account-destroyer
       ScheduleExpression: cron(0 23 * * ? *)
-      State: DISABLED
+      State: !Ref ScheduledEvent
       Targets:
         - Id: aws-account-destroyer
           RoleArn: !GetAtt 'EventTriggerRole.Arn'
