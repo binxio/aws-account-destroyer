@@ -42,7 +42,7 @@ aws sts assume-role \
 sed -e "s/{{ACCOUNT_ID}}/$ACCOUNT_ID/g" aws-nuke.yaml.template > aws-nuke.yaml
 
 docker run \
-    --rm -it \
+    --rm \
     -v $PWD:/wrk -w /wrk \
     -v $HOME/.aws:/home/aws-nuke/.aws:ro \
     quay.io/rebuy/aws-nuke:latest \
