@@ -26,7 +26,7 @@ if [[ -z $ALIAS ]]; then
 	echo "ERROR: account $ACCOUNT does not have an account alias.">&2
 	exit 1
 fi
-eval$(aws sts assume-role \
+eval $(aws sts assume-role \
 	--role-arn arn:aws:iam::$ACCOUNT_ID:role/aws-account-destroyer \
 	--role-session-name aws-account-destroyer \
 	--output text \
