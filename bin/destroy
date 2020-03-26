@@ -43,7 +43,7 @@ docker run \
     --rm \
     -v $PWD:/wrk -w /wrk \
     -v $HOME/.aws:/home/aws-nuke/.aws:ro \
-    --entrypoint /bin/sh  quay.io/rebuy/aws-nuke:latest  cat '$HOME/.aws/credentials'
+    --entrypoint /bin/sh  quay.io/rebuy/aws-nuke:latest  -c '/bin/cat $HOME/.aws/credentials'
 
 sed -e "s/{{ACCOUNT_ID}}/$ACCOUNT_ID/g" aws-nuke.yaml.template > aws-nuke.yaml
 
