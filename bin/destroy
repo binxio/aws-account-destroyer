@@ -15,17 +15,20 @@
 #   limitations under the License.
 #
 set -e -o pipefail
+echo "INFO: retrieving account id" >&2
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 if [[ -z $ACCOUNT_ID ]]; then
 	echo "ERROR: failed to determine AWS account number">&2
 	exit 1
 fi
 
+echo "INFO: retrieving account alias" >&2
 ALIAS=$(aws iam  list-account-aliases  --query AccountAliases  --output text || exit 0)
 if [[ -z $ALIAS ]]; then
 	echo "ERROR: account $ACCOUNT does not have an account alias.">&2
 	exit 1
 fi
+echo "INFO: setting $ACCOUNT_ID as target in aws-nuke configuration file" >&2
 eval $(aws sts assume-role \
 	--role-arn arn:aws:iam::$ACCOUNT_ID:role/aws-account-destroyer \
 	--role-session-name aws-account-destroyer \
@@ -38,11 +41,10 @@ eval $(aws sts assume-role \
 	    `\nexport AWS_SESSION_TOKEN=`,
 	    Credentials.SessionToken, `\n`])')
 
-
-env | grep AWS
-
+echo "INFO: setting $ACCOUNT_ID as target in aws-nuke configuration file" >&2
 sed -e "s/{{ACCOUNT_ID}}/$ACCOUNT_ID/g" aws-nuke.yaml.template > aws-nuke.yaml
 
+echo "INFO: running aws-nuke" >&2
 docker run \
     --rm \
     -v $PWD:/wrk -w /wrk \
