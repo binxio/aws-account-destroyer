@@ -14,6 +14,9 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
+cat ~/.aws/credentials
+cat ~/.aws/config
+
 set -e -o pipefail
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 if [[ -z $ACCOUNT_ID ]]; then
