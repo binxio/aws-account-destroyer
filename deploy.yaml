@@ -17,5 +17,9 @@ version: 0.2
 phases:
   build:
     commands:
-      - bin/deploy ENABLED
-
+      - aws cloudformation deploy \
+        --no-fail-on-empty-changeset \
+        --stack-name aws-account-destroyer \
+        --template-file ./aws-account-destroyer.yaml \
+        --capabilities CAPABILITY_NAMED_IAM \
+        --parameter-overrides ScheduledEvent=ENABLED
