@@ -71,3 +71,7 @@ accounts:
       OpsWorksUserProfile:
         - type: glob
         - value: arn:aws:iam::{{ACCOUNT_ID}}:assumed-role/aws-account-destroyer/*
+      Route53HostedZone:
+	- property: Name
+	  type: glob
+	  value: "*.binx.dev."
