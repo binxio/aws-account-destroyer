@@ -72,6 +72,6 @@ accounts:
         - type: glob
         - value: arn:aws:iam::{{ACCOUNT_ID}}:assumed-role/aws-account-destroyer/*
       Route53HostedZone:
-	- property: Name
-	  type: glob
-	  value: "*.binx.dev."
+        - property: Name
+          type: glob
+          value: "*.binx.dev."
