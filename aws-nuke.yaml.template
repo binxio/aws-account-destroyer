@@ -19,7 +19,7 @@ regions:
   - global
 account-blacklist:
 # add ALL account id's that you definitely want to keep
-#  - account-id-1
+  - 463637877380
 #  - account-id-2
 #  - account-id-3
 #  - ...
