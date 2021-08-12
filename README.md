@@ -7,4 +7,4 @@ Deploy this project and every night at 23:00, the content of your entire AWS acc
 
 Only deploy into accounts which are dispensable.
 
-read the blog on [How to minimize accidental cloud cost in your AWS account](https://binx.io/blog/2020/03/27/how-to-minimize-accidental-cloud-costs-in-your-aws-accounts/)
+read the blog on [How to minimize accidental cloud cost in your AWS account](https://binx.io/blog/2020/03/27/how-to-minimize-accidental-cloud-cost-in-your-aws-account/)
