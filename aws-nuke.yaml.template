@@ -41,7 +41,7 @@ regions: [
 ]
 
 # add ALL account id's that you definitely want to keep
-account-blacklist:
+account-blocklist:
   - 463637877380
 #  - account-id-2
 #  - account-id-3
