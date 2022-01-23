@@ -41,6 +41,7 @@ Resources:
       Name: aws-account-destroyer
       Description: 'Destroy everything in your AWS Account'
       ServiceRole: !Ref 'ProjectRole'
+      TimeoutInMinutes: 180
       Artifacts:
         Type: no_artifacts
       Environment:
