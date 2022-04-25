@@ -98,3 +98,7 @@ accounts:
         - property: Name
           type: glob
           value: "*.binx.dev."
+      Route53ResourceRecordSet:
+        - property: Name
+          type: glob
+          value: "*.binx.dev."
