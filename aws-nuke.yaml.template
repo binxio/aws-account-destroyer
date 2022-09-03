@@ -25,19 +25,13 @@ regions:
   - ca-central-1
   - ap-southeast-1
   - ap-southeast-2
-  - eu-central-1
   - us-east-1
   - us-east-2
   - us-west-1
   - us-west-2
-  - global
 account-blocklist:
 # add ALL account id's that you definitely want to keep
-  - 463637877380
-#  - account-id-2
-#  - account-id-3
-#  - ...
-#  - .
+  - 460043714319
 accounts:
   '{{ACCOUNT_ID}}':
     filters:
